@@ -1,5 +1,6 @@
 package com.computor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -9,8 +10,10 @@ public class Polynomial {
     private double a;
     private double b;
     private double c;
+    private double discriminant;
     private int degree = 0;
     private int noTerms;
+    private ArrayList<Double> outcomes = new ArrayList<>();
     private HashMap<String, Term> termMap = new HashMap<>();
 
     public Polynomial(String equation) {
@@ -68,6 +71,8 @@ public class Polynomial {
         cleanTermMap();
         this.noTerms = termMap.size();
         findDegree();
+        this.discriminant = findDiscriminant();
+        this.outcomes = solveQuadratic();
     }
 
     public void cleanTermMap(){
@@ -93,7 +98,6 @@ public class Polynomial {
     public int getDegree(){
         return this.degree;
     }
-
 
     public String reducedForm(){
         String toReturn = "";
@@ -124,16 +128,38 @@ public class Polynomial {
             if (pair.getValue().getCoefficient() != 0) {
                 switch (pair.getValue().getExponent()) {
                     case 2:
-                        this.a = pair.getValue().getCoefficient();
+                        //System.out.println("a: " + pair.getValue().getCoefficient());
+                        this.a += pair.getValue().getCoefficient();
+                        break ;
                     case 1:
-                        this.b = pair.getValue().getCoefficient();
+                        //System.out.println("b: " + pair.getValue().getCoefficient());
+                        this.b += pair.getValue().getCoefficient();
+                        break ;
                     default:
+                        //System.out.println("c: " + pair.getValue().getCoefficient());
                         this.c += pair.getValue().getCoefficient();
                 }
             }
         }
-
         return (b * b) + (-4 * a * c);
     }
 
+    public ArrayList<Double> solveQuadratic(){
+        ArrayList<Double> answers = new ArrayList<>();
+        answers.add(((-1 * b) + Math.sqrt(discriminant)) / (2 * a));
+        answers.add(((-1 * b) - Math.sqrt(discriminant)) / (2 * a));
+        return answers;
+    }
+
+    public ArrayList<Double> getOutcomes() {
+        return outcomes;
+    }
+
+    public double getDiscriminant() {
+        return discriminant;
+    }
+
+    public int getNoTerms() {
+        return noTerms;
+    }
 }
