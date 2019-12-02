@@ -7,6 +7,7 @@ public class Computor {
             Polynomial polynomial = new Polynomial(args[0]);
             System.out.println("Reduced Form: " + polynomial.reducedForm());
             System.out.println("Degree: " + polynomial.getDegree());
+            System.out.println("Discriminant: " + polynomial.findDiscriminant());
         } else {
             System.out.println("You must enter a single equation");
             System.exit(-1);

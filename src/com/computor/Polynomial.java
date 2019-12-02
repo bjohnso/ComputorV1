@@ -6,6 +6,9 @@ import java.util.Map;
 
 public class Polynomial {
 
+    private double a;
+    private double b;
+    private double c;
     private int degree = 0;
     private int noTerms;
     private HashMap<String, Term> termMap = new HashMap<>();
@@ -62,8 +65,18 @@ public class Polynomial {
                 termMap.put(term.getAlias(), term);
         }
 
+        cleanTermMap();
         this.noTerms = termMap.size();
         findDegree();
+    }
+
+    public void cleanTermMap(){
+        Iterator<Map.Entry<String, Term>> it = termMap.entrySet().iterator();
+        while (it.hasNext()){
+            Map.Entry<String, Term> pair = it.next();
+            if (pair.getValue().getCoefficient() == 0)
+                termMap.remove(pair);
+        }
     }
 
     public void findDegree(){
@@ -102,6 +115,25 @@ public class Polynomial {
             }
         }
         return toReturn + " = 0";
+    }
+
+    public double findDiscriminant() {
+        Iterator<Map.Entry<String, Term>> it = termMap.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, Term> pair = it.next();
+            if (pair.getValue().getCoefficient() != 0) {
+                switch (pair.getValue().getExponent()) {
+                    case 2:
+                        this.a = pair.getValue().getCoefficient();
+                    case 1:
+                        this.b = pair.getValue().getCoefficient();
+                    default:
+                        this.c += pair.getValue().getCoefficient();
+                }
+            }
+        }
+
+        return (b * b) + (-4 * a * c);
     }
 
 }
