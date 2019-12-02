@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class Polynomial {
 
-    private int degree;
+    private int degree = 0;
     private int noTerms;
     private HashMap<String, Term> termMap = new HashMap<>();
 
@@ -63,6 +63,22 @@ public class Polynomial {
         }
 
         this.noTerms = termMap.size();
+        findDegree();
+    }
+
+    public void findDegree(){
+        Iterator<Map.Entry<String, Term>> it = termMap.entrySet().iterator();
+        while (it.hasNext()){
+            Map.Entry<String, Term> pair = it.next();
+            if (pair.getValue().getCoefficient() != 0){
+                if (this.degree < pair.getValue().getExponent())
+                    this.degree = pair.getValue().getExponent();
+            }
+        }
+    }
+
+    public int getDegree(){
+        return this.degree;
     }
 
 
@@ -71,16 +87,18 @@ public class Polynomial {
         Iterator<Map.Entry<String, Term>> it = termMap.entrySet().iterator();
         while (it.hasNext()){
             Map.Entry<String, Term> pair = it.next();
-            if (pair.getValue().getCoefficient() < 0) {
-                if (toReturn.equals(""))
-                    toReturn += "- " + pair.getValue().getCoefficient()*-1 + " * " + pair.getValue().getAlias();
-                else
-                    toReturn += " - " + pair.getValue().getCoefficient()*-1 + " * " + pair.getValue().getAlias();
-            } else {
-                if (toReturn.equals(""))
-                    toReturn += pair.getValue().getCoefficient() + " * " + pair.getValue().getAlias();
-                else
-                    toReturn += " + " + pair.getValue().getCoefficient() + " * " + pair.getValue().getAlias();
+            if (pair.getValue().getCoefficient() != 0) {
+                if (pair.getValue().getCoefficient() < 0) {
+                    if (toReturn.equals(""))
+                        toReturn += "- " + pair.getValue().getCoefficient() * -1 + " * " + pair.getValue().getAlias();
+                    else
+                        toReturn += " - " + pair.getValue().getCoefficient() * -1 + " * " + pair.getValue().getAlias();
+                } else {
+                    if (toReturn.equals(""))
+                        toReturn += pair.getValue().getCoefficient() + " * " + pair.getValue().getAlias();
+                    else
+                        toReturn += " + " + pair.getValue().getCoefficient() + " * " + pair.getValue().getAlias();
+                }
             }
         }
         return toReturn + " = 0";

@@ -55,7 +55,7 @@ public class Term {
 
     public void setAlias(String alias){
         this.alias = alias;
-        this.status = true;
+        this.setStatus(true);
     }
 
     public void setCoefficient(Double coefficient){
