@@ -4,20 +4,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Polynomial {
 
     private double a;
     private double b;
     private double c;
-    private double discriminant;
     private int degree = 0;
-    private int noTerms;
-    private ArrayList<Double> outcomes = new ArrayList<>();
     private HashMap<String, Term> termMap = new HashMap<>();
 
     public Polynomial(String equation) {
+        //COLLECTS AND ADDS LIKE TERMS
         parsePolynomial(equation);
+        //REMOVES TERMS WITH COEFFICIENT OF ZERO
+        cleanTermMap();
     }
 
     private void parsePolynomial(String equation) {
@@ -67,12 +68,6 @@ public class Polynomial {
             } else
                 termMap.put(term.getAlias(), term);
         }
-
-        cleanTermMap();
-        this.noTerms = termMap.size();
-        findDegree();
-        this.discriminant = findDiscriminant();
-        this.outcomes = solveQuadratic();
     }
 
     public void cleanTermMap(){
@@ -84,15 +79,68 @@ public class Polynomial {
         }
     }
 
-    public void findDegree(){
+    public boolean simplify(){
+        String common = "";
+        int exponents = 0;
+        Iterator<Map.Entry<String, Term>> it = termMap.entrySet().iterator();
+        Map.Entry<String, Term> pair;
+
+
+        if (it.hasNext()) {
+            pair = it.next();
+            common = pair.getValue().getVariable();
+            if (pair.getValue().getCoefficient() != 0 && pair.getValue().getExponent() != 0){
+                exponents++;
+            }
+        } else {
+            return false;
+        }
+
+        while (it.hasNext()) {
+            pair = it.next();
+            if (!common.equals(pair.getValue().getVariable())){
+                return false;
+            }
+            if (pair.getValue().getCoefficient() != 0 && pair.getValue().getExponent() != 0){
+                exponents++;
+            }
+        }
+
+        System.out.println("EXPONENTS : " + exponents + " TERMS : " + termMap.size());
+
+        if (exponents < termMap.size() && findDegree() <= 2)
+            return true;
+        else if (exponents == termMap.size()){
+            it = termMap.entrySet().iterator();
+            ArrayList<Term> termList = new ArrayList<>();
+            while (it.hasNext()) {
+                pair = it.next();
+                Term term = pair.getValue();
+                term.setExponent(term.getExponent() - 1);
+                term.setAlias(term.getVariable() + "^" + term.getExponent());
+                termList.add(term);
+            }
+            termMap.clear();
+            for (Term t : termList){
+                termMap.put(t.getAlias(), t);
+            }
+            return simplify();
+        } else {
+            return false;
+        }
+    }
+
+    public int findDegree(){
+        int degree = 0;
         Iterator<Map.Entry<String, Term>> it = termMap.entrySet().iterator();
         while (it.hasNext()){
             Map.Entry<String, Term> pair = it.next();
             if (pair.getValue().getCoefficient() != 0){
-                if (this.degree < pair.getValue().getExponent())
-                    this.degree = pair.getValue().getExponent();
+                if (degree < pair.getValue().getExponent())
+                    degree = pair.getValue().getExponent();
             }
         }
+        return degree;
     }
 
     public int getDegree(){
@@ -128,15 +176,12 @@ public class Polynomial {
             if (pair.getValue().getCoefficient() != 0) {
                 switch (pair.getValue().getExponent()) {
                     case 2:
-                        //System.out.println("a: " + pair.getValue().getCoefficient());
                         this.a += pair.getValue().getCoefficient();
                         break ;
                     case 1:
-                        //System.out.println("b: " + pair.getValue().getCoefficient());
                         this.b += pair.getValue().getCoefficient();
                         break ;
                     default:
-                        //System.out.println("c: " + pair.getValue().getCoefficient());
                         this.c += pair.getValue().getCoefficient();
                 }
             }
@@ -144,22 +189,10 @@ public class Polynomial {
         return (b * b) + (-4 * a * c);
     }
 
-    public ArrayList<Double> solveQuadratic(){
+    public ArrayList<Double> solveQuadratic(Double discriminant){
         ArrayList<Double> answers = new ArrayList<>();
         answers.add(((-1 * b) + Math.sqrt(discriminant)) / (2 * a));
         answers.add(((-1 * b) - Math.sqrt(discriminant)) / (2 * a));
         return answers;
-    }
-
-    public ArrayList<Double> getOutcomes() {
-        return outcomes;
-    }
-
-    public double getDiscriminant() {
-        return discriminant;
-    }
-
-    public int getNoTerms() {
-        return noTerms;
     }
 }
