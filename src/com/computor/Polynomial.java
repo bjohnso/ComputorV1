@@ -8,11 +8,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Polynomial {
 
-    private double a;
-    private double b;
-    private double c;
+    private double a = 0.0;
+    private double b = 0.0;
+    private double c = 0.0;
     private int degree = 0;
     private HashMap<String, Term> termMap = new HashMap<>();
+    private ArrayList<Double> answers = new ArrayList<>();
+    private String status = "";
 
     public Polynomial(String equation) {
         //COLLECTS AND ADDS LIKE TERMS
@@ -79,7 +81,7 @@ public class Polynomial {
         }
     }
 
-    public boolean simplify(){
+    public boolean solve(){
         String common = "";
         int exponents = 0;
         Iterator<Map.Entry<String, Term>> it = termMap.entrySet().iterator();
@@ -108,9 +110,12 @@ public class Polynomial {
 
         System.out.println("EXPONENTS : " + exponents + " TERMS : " + termMap.size());
 
-        if (exponents < termMap.size() && findDegree() <= 2)
+        if (exponents < termMap.size() && findDegree() == 2) {
+            //FIND DISCRIMINANT AND SOLVE USING QUADRATIC FORMULA
+            this.answers = solveQuadratic(findDiscriminant());
+            this.status = "quadratic";
             return true;
-        else if (exponents == termMap.size()){
+        } else if (exponents == termMap.size()){
             it = termMap.entrySet().iterator();
             ArrayList<Term> termList = new ArrayList<>();
             while (it.hasNext()) {
@@ -124,8 +129,14 @@ public class Polynomial {
             for (Term t : termList){
                 termMap.put(t.getAlias(), t);
             }
-            return simplify();
+            return solve();
+        } else if (findDegree() == 1){
+            //IF DEGREE IS ONE WE CAN SOLVE FOR X
+            this.answers = solveSimple();
+            this.status = "simple";
+            return true;
         } else {
+            //Polynomial is unsolvable
             return false;
         }
     }
@@ -189,10 +200,35 @@ public class Polynomial {
         return (b * b) + (-4 * a * c);
     }
 
-    public ArrayList<Double> solveQuadratic(Double discriminant){
+    private ArrayList<Double> solveQuadratic(Double discriminant){
         ArrayList<Double> answers = new ArrayList<>();
         answers.add(((-1 * b) + Math.sqrt(discriminant)) / (2 * a));
         answers.add(((-1 * b) - Math.sqrt(discriminant)) / (2 * a));
         return answers;
+    }
+
+    private ArrayList<Double> solveSimple(){
+        Double ans = 0.0;
+        Double fin = 0.0;
+        Iterator<Map.Entry<String, Term>> it = termMap.entrySet().iterator();
+        while(it.hasNext()){
+            Map.Entry<String, Term> pair = it.next();
+            if (pair.getValue().getExponent() == 0)
+                ans += pair.getValue().getCoefficient();
+            else if (pair.getValue().getExponent() == 1)
+                fin = pair.getValue().getCoefficient();
+        }
+        ans *= -1;
+        ArrayList<Double> answers = new ArrayList<>();
+        answers.add(ans / fin);
+        return answers;
+    }
+
+    public ArrayList<Double> getAnswers() {
+        return answers;
+    }
+
+    public String getStatus() {
+        return status;
     }
 }
