@@ -35,9 +35,9 @@ public class Polynomial {
                 if (split[i].charAt(0) == '=')
                     equals = true;
 
-                //check if new term or sign indicator
+                //CHECK IF NEW SIGN INDICATOR
                 if (term.getStatus()) {
-                    //Check if term alias exists
+                    //CHECK IF TERM ALIAS EXISTS
                     if (termMap.get(term.getAlias()) != null){
                         termMap.get(term.getAlias()).modCoefficient(term.getCoefficient());
                     } else
@@ -64,7 +64,7 @@ public class Polynomial {
         }
 
         if (term.getStatus()) {
-            //Check if term alias exists
+            //CHECK IF TERM ALIAS EXISTS
             if (termMap.get(term.getAlias()) != null){
                 termMap.get(term.getAlias()).modCoefficient(term.getCoefficient());
             } else
@@ -87,7 +87,6 @@ public class Polynomial {
         Iterator<Map.Entry<String, Term>> it = termMap.entrySet().iterator();
         Map.Entry<String, Term> pair;
 
-
         if (it.hasNext()) {
             pair = it.next();
             common = pair.getValue().getVariable();
@@ -107,8 +106,6 @@ public class Polynomial {
                 exponents++;
             }
         }
-
-        System.out.println("EXPONENTS : " + exponents + " TERMS : " + termMap.size());
 
         if (exponents < termMap.size() && findDegree() == 2) {
             //FIND DISCRIMINANT AND SOLVE USING QUADRATIC FORMULA
@@ -135,8 +132,12 @@ public class Polynomial {
             this.answers = solveSimple();
             this.status = "simple";
             return true;
-        } else {
-            //Polynomial is unsolvable
+        } else if (exponents == 0){
+            this.status = "infinite";
+            return true;
+        }
+        else {
+            //POLYNOMIAL IS UNSOLVABLE
             return false;
         }
     }

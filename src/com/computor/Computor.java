@@ -12,12 +12,16 @@ public class Computor {
                     if (polynomial.findDiscriminant() > 0)
                         System.out.println("Discriminant is strictly positive, the two solutions are:");
                     else if (polynomial.findDiscriminant() == 0)
-                        System.out.println("Discriminant is strictly zero, teh repeated solution are:");
+                        System.out.println("Discriminant is strictly zero, the repeated solution are:");
                     else
                         System.out.println("Discriminant is strictly negative, only one solution is an element of the reals:");
                 }
-                for (Double d : polynomial.getAnswers())
-                    System.out.println("X = " + d);
+                if (polynomial.getStatus().equals(("infinite"))){
+                    System.out.println("All the real numbers are the solution");
+                } else {
+                    for (Double d : polynomial.getAnswers())
+                        System.out.println("X = " + d);
+                }
             }
             else{
                 System.out.println("Polynomial could not be solved");
