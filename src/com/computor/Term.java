@@ -5,9 +5,11 @@ public class Term {
     private String alias;
     private String variable;
     private int exponent = 1;
+    private boolean coefficientSet = false;
     private double coefficient;
-    private String operation;
+    private String operation = "";
     private int sign = 1;
+    private boolean signSet = false;
     private boolean status = false;
 
     public Term(){
@@ -60,16 +62,19 @@ public class Term {
 
     public void setCoefficient(Double coefficient){
         this.coefficient = coefficient * sign;
+        this.coefficientSet = true;
     }
 
     public void setExponent(int exponent){
-        this.exponent = exponent;
+        if (this.operation.equalsIgnoreCase("/"))
+            this.exponent = exponent - 1;
+        else
+            this.exponent = exponent;
+        this.operation = "*";
     }
 
     public void setOperation(String operation){
         this.operation = operation;
-        if (operation.equalsIgnoreCase("/"))
-            this.coefficient = 1 / this.coefficient;
     }
 
     public void setVariable(String variable){
@@ -79,9 +84,18 @@ public class Term {
     public void setSign(int sign){
         this.sign *= sign;
         this.coefficient *= sign;
+        this.signSet = true;
     }
 
     private void setStatus(boolean status){
         this.status = status;
+    }
+
+    public boolean isCoefficientSet() {
+        return coefficientSet;
+    }
+
+    public boolean isSignSet() {
+        return signSet;
     }
 }

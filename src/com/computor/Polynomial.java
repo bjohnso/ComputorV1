@@ -13,7 +13,7 @@ public class Polynomial {
     private double c = 0.0;
     private int degree = 0;
     private HashMap<String, Term> termMap = new HashMap<>();
-    private ArrayList<Double> answers = new ArrayList<>();
+    private ArrayList<String> answers = new ArrayList<>();
     private String status = "";
 
     public Polynomial(String equation) {
@@ -57,8 +57,13 @@ public class Polynomial {
             } else if ((split[i].charAt(0) >= 'a' && split[i].charAt(0) <= 'z')
                     || split[i].charAt(0) >= 'A' && split[i].charAt(0) <= 'Z'){
                 term.setVariable("" + split[i].charAt(0));
-                term.setExponent(Integer.parseInt("" + split[i].charAt(2)));
+                if (split[i].length() < 3)
+                    term.setExponent(1);
+                else
+                    term.setExponent(Integer.parseInt("" + split[i].charAt(2)));
                 term.setAlias(term.getVariable() + '^' + term.getExponent());
+                if (!term.isCoefficientSet())
+                    term.setCoefficient(1.0);
             } else if (split[i].charAt(0) >= '0' && split[i].charAt(0) <= '9')
                 term.setCoefficient(Double.parseDouble(split[i]));
         }
@@ -113,17 +118,23 @@ public class Polynomial {
             this.status = "quadratic";
             return true;
         } else if (exponents == termMap.size()){
+            int mod;
+            if (findInverseDegree() > 0)
+                mod = 1;
+            else
+                mod = -1;
             it = termMap.entrySet().iterator();
             ArrayList<Term> termList = new ArrayList<>();
             while (it.hasNext()) {
                 pair = it.next();
                 Term term = pair.getValue();
-                term.setExponent(term.getExponent() - 1);
+                term.setOperation("*");
+                term.setExponent(term.getExponent() + mod);
                 term.setAlias(term.getVariable() + "^" + term.getExponent());
                 termList.add(term);
             }
             termMap.clear();
-            for (Term t : termList){
+            for (Term t : termList) {
                 termMap.put(t.getAlias(), t);
             }
             return solve();
@@ -155,6 +166,19 @@ public class Polynomial {
         return degree;
     }
 
+    public int findInverseDegree(){
+        int inverse = 0;
+        Iterator<Map.Entry<String, Term>> it = termMap.entrySet().iterator();
+        while (it.hasNext()){
+            Map.Entry<String, Term> pair = it.next();
+            if (pair.getValue().getCoefficient() != 0){
+                if (inverse > pair.getValue().getExponent())
+                    inverse = pair.getValue().getExponent();
+            }
+        }
+        return inverse;
+    }
+
     public int getDegree(){
         return this.degree;
     }
@@ -178,6 +202,10 @@ public class Polynomial {
                 }
             }
         }
+
+        if (toReturn.equals(""))
+            toReturn += "0";
+
         return toReturn + " = 0";
     }
 
@@ -201,14 +229,17 @@ public class Polynomial {
         return (b * b) + (-4 * a * c);
     }
 
-    private ArrayList<Double> solveQuadratic(Double discriminant){
-        ArrayList<Double> answers = new ArrayList<>();
-        answers.add(((-1 * b) + Math.sqrt(discriminant)) / (2 * a));
-        answers.add(((-1 * b) - Math.sqrt(discriminant)) / (2 * a));
+    private ArrayList<String> solveQuadratic(Double discriminant){
+        ArrayList<String> answers = new ArrayList<>();
+        if (discriminant < 0){
+            return solveComplex(discriminant);
+        }
+        answers.add("" + ((-1 * b) + Math.sqrt(discriminant)) / (2 * a));
+        answers.add("" +((-1 * b) - Math.sqrt(discriminant)) / (2 * a));
         return answers;
     }
 
-    private ArrayList<Double> solveSimple(){
+    private ArrayList<String> solveSimple(){
         Double ans = 0.0;
         Double fin = 0.0;
         Iterator<Map.Entry<String, Term>> it = termMap.entrySet().iterator();
@@ -220,12 +251,20 @@ public class Polynomial {
                 fin = pair.getValue().getCoefficient();
         }
         ans *= -1;
-        ArrayList<Double> answers = new ArrayList<>();
-        answers.add(ans / fin);
+        ArrayList<String> answers = new ArrayList<>();
+        answers.add("" + ans / fin);
         return answers;
     }
 
-    public ArrayList<Double> getAnswers() {
+    public ArrayList<String> solveComplex(double discriminant){
+        double term1 = (this.b * -1) / (2 * this.a);
+        double term2 = (Math.sqrt(discriminant * -1) / (2 * this.a));
+        answers.add(term1 + " + " + term2 + " * i");
+        answers.add(term1 + " - " + term2 + " * i");
+        return answers;
+    }
+
+    public ArrayList<String> getAnswers() {
         return answers;
     }
 

@@ -2,10 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3406af8e-e9f4-4277-9e59-09f567c66a88" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/com/computor/Computor.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/com/computor/Computor.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/com/computor/Polynomial.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/com/computor/Polynomial.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/com/computor/Term.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/com/computor/Term.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/computor/Computor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/computor/Computor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/computor/Polynomial.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/computor/Polynomial.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/computor/Term.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/computor/Term.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -71,7 +74,8 @@
       <updated>1575281708981</updated>
       <workItem from="1575281714563" duration="12473000" />
       <workItem from="1575356928561" duration="16455000" />
-      <workItem from="1575459898475" duration="3297000" />
+      <workItem from="1575459898475" duration="3441000" />
+      <workItem from="1575538841374" duration="6255000" />
     </task>
     <servers />
   </component>
